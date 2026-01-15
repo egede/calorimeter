@@ -45,8 +45,7 @@ setup(
     include_package_data=True,
     data_files=[
         ("calorimeter/examples", [
-            "examples/*.ipynb",
-            "examples/*.py",
+            "calorimeterexamples/simulate.ipynb",
         ]),
     ],
 )
