@@ -97,7 +97,7 @@ class Calorimeter:
 
     def draw(self, ax=None, extend=15, show_traces=False):
         '''Draw the calorimeter design with z-axis horizontal.
-        
+
         Parameters:
         -----------
         ax : matplotlib.axes.Axes, optional
@@ -106,7 +106,7 @@ class Calorimeter:
             The perpendicular extent of the calorimeter (default: 10).
         show_traces : bool, optional
             If True, overlay recorded particle trajectories (default: False).
-            
+
         Returns:
         --------
         matplotlib.axes.Axes
@@ -114,19 +114,19 @@ class Calorimeter:
         '''
         if ax is None:
             fig, ax = plt.subplots(figsize=(12, 6))
-        
+
         # Colors: blue for active layers, gray for passive layers
         active_color = '#1f77b4'    # Blue
         passive_color = '#999999'   # Gray
-        
+
         # Draw each layer
         for volume in self._layers:
             z_start = volume.z
             thickness = volume.layer._thickness
-            
+
             # Determine color based on whether layer is active
             color = active_color if volume.layer._yield > 0 else passive_color
-            
+
             # Create rectangle: (z_start, -extend/2), width=thickness, height=extend
             rect = patches.Rectangle(
                 (z_start, -extend/2),
@@ -138,7 +138,7 @@ class Calorimeter:
                 alpha=0.7
             )
             ax.add_patch(rect)
-        
+
         # Draw particle traces if enabled
         electron_color = '#d62728'  # Red
         muon_color = '#2ca02c'      # Green
@@ -157,7 +157,7 @@ class Calorimeter:
                         has_electron_trace = True
                     else:
                         has_muon_trace = True
-                    
+
         # Set axis properties
         ax.set_xlim(-0.5, self._zend + 0.5)
         ax.set_ylim(-extend/2 - 1, extend/2 + 3)
@@ -166,7 +166,7 @@ class Calorimeter:
         ax.set_title('Calorimeter Design', fontsize=14, fontweight='bold')
         ax.set_aspect('equal')
         ax.grid(True, alpha=0.3)
-        
+
         # Add legend
         active_patch = patches.Patch(color=active_color, alpha=0.7, label='Active layer')
         passive_patch = patches.Patch(color=passive_color, alpha=0.7, label='Passive layer')
@@ -177,7 +177,5 @@ class Calorimeter:
             if has_muon_trace:
                 legend_handles.append(Line2D([0],[0], color=muon_color, lw=2, label='Muon traces'))
         ax.legend(handles=legend_handles, loc='upper right')
-        
+
         return ax
-
-

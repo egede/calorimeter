@@ -10,12 +10,12 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name="calorimeter",
     version="0.1.0",
-    author="Your Name",
-    author_email="your.email@example.com",
+    author="Ulrik Egede",
+    author_email="ulrik.egede@monash.edu",
     description="A package that for education purposes creates a simple calorimeter that can be used for simulations",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/calorimeter",
+    url="https://github.com/egede/calorimeter",
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -40,6 +40,7 @@ setup(
             "black>=23.0.0",
             "flake8>=6.0.0",
             "mypy>=1.0.0",
+            "pre-commit>=3.6.0",
         ],
     },
     include_package_data=True,

@@ -9,10 +9,10 @@ def _run_single_simulation(args):
     '''Helper function for parallel simulation of individual particles.
     Takes a tuple of (calorimeter, particle, step_size) and returns ionisations.'''
     calorimeter, particle, step_size = args
-    
+
     calorimeter.reset()
     particles = deque([copy.copy(particle)])
-    
+
     while particles:
         p = particles.popleft()
         newparticles = calorimeter.step(p, step_size)
@@ -33,20 +33,20 @@ class Simulation:
     def __init__(self, calorimeter):
         self._calorimeter = calorimeter
 
-    
+
     def simulate(self, particle, number, deadcellfraction=0.0):
         '''Run a individual simulation. The ingoing particle is simulated going
         through the calorimeter "number" times. A 2D array is returned with the
         first axis the ionisation in the individual layers and the second corresponding to each
         new particle.
-        
+
         Uses multiprocessing to parallelize individual particle simulations across available CPU cores.'''
         # Prepare arguments for parallel execution
         args_list = [(copy.deepcopy(self._calorimeter), particle, 0.1) for _ in range(number)]
-        
+
         # Use all available CPU cores for parallel simulation
         num_cores = mp.cpu_count()
-        
+
         with Pool(num_cores) as pool:
             ionisations = pool.map(_run_single_simulation, args_list)
 
@@ -60,7 +60,7 @@ class Simulation:
         This records the path of all particles created during the shower.
         Note: This is computationally expensive and should only be used for
         a single ingoing particle (number=1).
-        
+
         Returns:
         --------
         tuple : (ionisations, calorimeter)
@@ -71,14 +71,14 @@ class Simulation:
         cal = copy.deepcopy(self._calorimeter)
         cal.enable_tracing()
         cal.reset()
-        
+
         particles = deque([copy.copy(particle)])
         all_particles = []
-        
+
         while particles:
             p = particles.popleft()
             newparticles = cal.step(p, 0.1)
-            
+
             # If no new particles created (energy below cutoff), record the current particle
             if not newparticles:
                 all_particles.append(p)
@@ -90,13 +90,13 @@ class Simulation:
                     else:
                         # Record particles that exit the calorimeter
                         all_particles.append(np_p)
-        
+
         # Record all final particles
         for p in all_particles:
             cal.record_trace(p)
-        
+
         ionisations = cal.ionisations()
         mask = np.random.random(ionisations.shape) < deadcellfraction
         ionisations[mask] = 0
-        
+
         return ionisations, cal
