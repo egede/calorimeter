@@ -43,10 +43,10 @@ setup(
         ],
     },
     include_package_data=True,
-    package_data={
-        "calorimeter": [
+    data_files=[
+        ("calorimeter/examples", [
             "examples/*.ipynb",
             "examples/*.py",
-        ],
-    },
+        ]),
+    ],
 )
