@@ -3,7 +3,7 @@ import pytest
 
 from calorimeter.calorimeter import Calorimeter
 from calorimeter.layer import Layer
-from calorimeter.particle import Electron, Photon, Particle
+from calorimeter.particle import Electron, Photon
 
 
 def test_calorimeter_add_layer_positions_and_zend():
@@ -27,7 +27,8 @@ def test_calorimeter_step_in_active_layer_ionises(monkeypatch):
     out = cal.step(e, step=0.5)
 
     assert out == [e]
-    assert pytest.approx(layer._ionisation, 1e-8) == 1.0
+    # Access the layer from the calorimeter since add_layer makes a copy
+    assert cal._layers[0].layer._ionisation == pytest.approx(1.0, abs=1e-8)
 
 
 def test_calorimeter_reset_clears_ionisation_and_traces():

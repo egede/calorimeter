@@ -19,9 +19,9 @@ def test_draw_returns_axes_and_rectangles():
     # Two rectangles for two layers
     assert len(ax.patches) >= 2
 
-    # Check colors for active/passive layers
-    active_color = to_rgba("#1f77b4")
-    passive_color = to_rgba("#999999")
+    # Check colors for active/passive layers (alpha=0.7 as set in draw method)
+    active_color = to_rgba("#1f77b4", alpha=0.7)
+    passive_color = to_rgba("#999999", alpha=0.7)
     # First two patches correspond to two layers added
     colors = [p.get_facecolor() for p in ax.patches[:2]]
     assert colors[0] == active_color
