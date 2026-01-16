@@ -9,9 +9,9 @@ A Python package for visualization and analysis of calorimeter data.
 
 ## Features
 
-- **Energy Distribution Plotting**: Visualize energy measurements from calorimeter detectors
-- **Multi-Distribution Comparison**: Compare multiple energy distributions side-by-side
-- **Easy Integration**: Simple API for quick visualization and analysis
+- **Create a 1D calorimenter with active and passive layers**
+- **Visualise shower development**
+- **Monte Carlo generation to explore resolution**
 
 ## Installation
 
@@ -32,51 +32,26 @@ pip install -e ".[dev]"
 ```
 
 ## Run in Binder
-The link below can
+If you are staff or student at an Australian or New Zealand University, you can use [binder](https://binderhub.rc.nectar.org.au/v2/gh/egede/calorimeter/HEAD?labpath=calorimeter%2Fexamples%2Fsimulate.ipynb) on ARDC resources.
 
 ## Quick Start
 
 ```python
-import numpy as np
-from calorimeter import plot_energy_distribution
-
-# Generate sample energy data
-energies = np.random.gamma(shape=2, scale=50, size=1000)
-
-# Create a plot
-fig, ax = plot_energy_distribution(energies, bins=50, title="Sample Calorimeter Data")
-```
-
-## Usage Examples
-
-### Single Distribution
-
-```python
-import matplotlib.pyplot as plt
-from calorimeter import plot_energy_distribution
-
-# Your energy data
-energies = [10.5, 15.3, 12.1, 18.9, ...]
-
-# Plot
-fig, ax = plot_energy_distribution(energies, bins=40)
-plt.show()
-```
-
-### Multiple Distributions
-
-```python
-from calorimeter.plotter import plot_multiple_distributions
+from calorimeter import Calorimeter, Simulation, Layer, Electron
 import matplotlib.pyplot as plt
 
-# Compare datasets
-data = {
-    'Detector A': [10.5, 15.3, 12.1, 18.9, ...],
-    'Detector B': [11.2, 14.8, 13.5, 17.2, ...],
-    'Detector C': [9.8, 16.1, 11.5, 19.3, ...],
-}
+mycal = Calorimeter()
+lead = Layer('lead', 2.0, 0.5, 0.0)
+scintillator = Layer('Scin', 0.01, 0.5, 1.0)
+for i in range(40):
+    mycal.add_layers([lead, scintillator])
 
-fig, ax = plot_multiple_distributions(data, bins=50)
+sim = Simulation(mycal)
+ionisations, cal_with_traces = sim.simulate_with_tracing(Electron(0.0, 100.0), deadcellfraction=0.0)
+
+fig, ax = plt.subplots(figsize=(14, 6))
+ax = cal_with_traces.draw(ax=ax, show_traces=True)
+plt.tight_layout()
 plt.show()
 ```
 
@@ -122,26 +97,6 @@ mypy calorimeter
 pytest --cov=calorimeter tests/
 ```
 
-## Project Structure
-
-```
-calorimeter/
-├── calorimeter/           # Package source code
-│   ├── __init__.py
-│   └── plotter.py
-├── tests/                 # Test directory
-│   ├── __init__.py
-│   ├── test_plotter.py
-│   └── test_integration.py
-├── .github/
-│   └── workflows/         # GitHub Actions workflows
-│       └── tests.yml
-├── setup.py              # Package setup configuration
-├── requirements.txt      # Runtime dependencies
-├── requirements-dev.txt  # Development dependencies
-├── README.md            # This file
-└── LICENSE              # MIT License
-```
 
 ## License
 
@@ -184,4 +139,5 @@ Note: pre-commit runs automatically on `git commit` after installation.
 
 ## Support
 
-For issues, questions, or suggestions, please open an issue on GitHub.
+- For issues, or bug reports, please open an [issue](https://github.com/egede/calorimeter/issues) on GitHub.
+- For questions and discussions, use the [discussion forum](https://github.com/egede/calorimeter/discussions).
