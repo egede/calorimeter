@@ -33,3 +33,27 @@ def test_layer_interact_triggers(monkeypatch):
     out = layer.interact(e, step=0.5)
     # Electron either radiates a photon and itself
     assert len(out) in (1, 2)
+
+
+def test_layer_get_name():
+    """Test the getter for layer name."""
+    layer = Layer(name="TestLayer", material=0.5, thickness=1.0, response=1.0)
+    assert layer.get_name() == "TestLayer"
+
+
+def test_layer_get_material():
+    """Test the getter for layer material."""
+    layer = Layer(name="TestLayer", material=0.5, thickness=1.0, response=1.0)
+    assert layer.get_material() == 0.5
+
+
+def test_layer_get_thickness():
+    """Test the getter for layer thickness."""
+    layer = Layer(name="TestLayer", material=0.5, thickness=1.0, response=1.0)
+    assert layer.get_thickness() == 1.0
+
+
+def test_layer_get_response():
+    """Test the getter for layer response."""
+    layer = Layer(name="TestLayer", material=0.5, thickness=1.0, response=1.0)
+    assert layer.get_yield() == 1.0
