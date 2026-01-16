@@ -4,6 +4,19 @@ Setup configuration for the calorimeter package.
 
 from setuptools import setup, find_packages
 
+
+def read_requirements(filename):
+    """Read requirements from a file, excluding comments and -r directives."""
+    with open(filename, "r", encoding="utf-8") as fh:
+        lines = []
+        for line in fh:
+            line = line.strip()
+            # Skip empty lines, comments, and -r directives
+            if line and not line.startswith("#") and not line.startswith("-r"):
+                lines.append(line)
+        return lines
+
+
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
@@ -29,19 +42,9 @@ setup(
         "Topic :: Scientific/Engineering :: Physics",
     ],
     python_requires=">=3.11",
-    install_requires=[
-        "matplotlib>=3.5.0",
-        "numpy>=1.20.0",
-    ],
+    install_requires=read_requirements("requirements.txt"),
     extras_require={
-        "dev": [
-            "pytest>=7.0.0",
-            "pytest-cov>=4.0.0",
-            "black>=23.0.0",
-            "flake8>=6.0.0",
-            "mypy>=1.0.0",
-            "pre-commit>=3.6.0",
-        ],
+        "dev": read_requirements("requirements-dev.txt"),
     },
     include_package_data=True,
     data_files=[
