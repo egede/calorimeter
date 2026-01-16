@@ -141,7 +141,38 @@ This project is licensed under the GPLv3 License - see the [LICENSE](LICENSE.md)
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Before submitting a PR:
+
+- Install dev dependencies: `pip install -e ".[dev]"`
+- Run the test suite: `pytest -q`
+- Check linting and types: `flake8 calorimeter tests` and `mypy calorimeter`
+
+### Running Tests Locally
+
+In a fresh clone, run:
+
+```bash
+pip install -e ".[dev]"
+pytest -q
+```
+
+### Pre-commit Hooks
+
+This repository includes a shared pre-commit configuration at [.pre-commit-config.yaml](.pre-commit-config.yaml).
+
+It will:
+- Strip outputs from `*.ipynb` notebooks (via `nbstripout`).
+- Apply basic hygiene checks (trailing whitespace, EOF fixer, YAML checks).
+
+Set up locally:
+
+```bash
+pip install -e ".[dev]"
+pre-commit install
+pre-commit run --all-files
+```
+
+Note: pre-commit runs automatically on `git commit` after installation.
 
 ## Support
 

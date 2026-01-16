@@ -19,11 +19,11 @@ class Particle:
         '''Move the particle forward by step, updating transverse position based on angle'''
         # Record current position before moving
         self.trace.append((self.z, self.x, self.y))
-        
+
         # Update transverse positions based on angles
         self.x += step * self.angle_x
         self.y += step * self.angle_y
-        
+
         # Move forward in z
         self.z += step
 
@@ -51,7 +51,7 @@ class Electron(Particle):
             angle_sigma = 0.02  # Standard deviation of scattering angle
             new_angle_x = self.angle_x + random.gauss(0, angle_sigma)
             new_angle_y = self.angle_y + random.gauss(0, angle_sigma)
-            
+
             particles = [
                 Electron(self.z, split*self.energy, self.x, self.y, new_angle_x, new_angle_y, self.trace.copy()),
                 Photon(self.z, (1.0-split)*self.energy, self.x, self.y, new_angle_x, new_angle_y, self.trace.copy())
@@ -74,7 +74,7 @@ class Photon(Particle):
             angle_sigma = 0.05  # Standard deviation of scattering angle
             new_angle_x = self.angle_x + random.gauss(0, angle_sigma)
             new_angle_y = self.angle_y + random.gauss(0, angle_sigma)
-            
+
             particles = [
                 Electron(self.z, split*self.energy, self.x, self.y, new_angle_x, new_angle_y, self.trace.copy()),
                 Electron(self.z, (1.0-split)*self.energy, self.x, self.y, new_angle_x, new_angle_y, self.trace.copy())
