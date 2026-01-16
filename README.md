@@ -7,6 +7,8 @@
 
 A Python package for visualization and analysis of calorimeter data.
 
+![Shower visualization](shower.png)
+
 ## Features
 
 - **Create a 1D calorimenter with active and passive layers**
