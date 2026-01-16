@@ -1,3 +1,8 @@
+[![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
+![Tests](https://github.com/egede/calorimeter/workflows/Tests/badge.svg)
+[![codecov](https://codecov.io/gh/egede/calorimeter/branch/main/graph/badge.svg)](https://codecov.io/gh/egede/calorimeter)
+[![Binder](https://binderhub.rc.nectar.org.au/badge_logo.svg)](https://binderhub.rc.nectar.org.au/v2/gh/egede/calorimeter/HEAD?labpath=calorimeter%2Fexamples%2Fsimulate.ipynb)
+
 # Calorimeter
 
 A Python package for visualization and analysis of calorimeter data.
@@ -25,6 +30,9 @@ pip install -e .
 ```bash
 pip install -e ".[dev]"
 ```
+
+## Run in Binder
+The link below can
 
 ## Quick Start
 
