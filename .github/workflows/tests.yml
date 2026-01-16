@@ -41,10 +41,24 @@ jobs:
       run: |
         pytest tests/ -v --cov=calorimeter --cov-report=xml
 
+    - name: Debug - Check if token exists
+      if: matrix.python-version == '3.13'
+      run: |
+        if [ -z "${{ secrets.CODECOV_TOKEN }}" ]; then
+          echo "ERROR: CODECOV_TOKEN secret is not set or is empty"
+        else
+          echo "CODECOV_TOKEN is set (length: ${#CODECOV_TOKEN})"
+        fi
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
     - name: Upload coverage reports
       uses: codecov/codecov-action@v5
       if: matrix.python-version == '3.13'
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       with:
+        files: ./coverage.xml
         fail_ci_if_error: false
         verbose: true
         token: ${{ secrets.CODECOV_TOKEN }}
