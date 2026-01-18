@@ -25,7 +25,7 @@ class Calorimeter:
     def add_layer(self, layer):
         '''Add a single layer to the back of the calorimeter.'''
         self._layers.append(self.Volume(self._zend, copy.copy(layer)))
-        self._zend += layer._thickness
+        self._zend += layer.get_thickness()
 
     def add_layers(self, layers):
         '''Add a list of layers, one after the other to the back of the calorimeter.'''
@@ -40,7 +40,7 @@ class Calorimeter:
 
         involume = False
         for volume in self._layers:
-            if (particle.z >= volume.z) and (particle.z < volume.z + volume.layer._thickness):
+            if (particle.z >= volume.z) and (particle.z < volume.z + volume.layer.get_thickness()):
                 involume = True
                 break
 
@@ -54,13 +54,13 @@ class Calorimeter:
 
         return particles
 
-    def positions(self, active=True):
-        '''Provide an array of the z coordinates for the start of each layer. If active=True, only return the active layers'''
-        return np.array([v.z for v in self._layers if not active or v.layer._yield>0])
+    def volumes(self, active=True):
+        '''Return the list of volumes in the calorimeter.'''
+        return [v for v in self._layers if not active or v.layer.get_yield()>0]
 
     def ionisations(self, active=True):
         '''Provide a list of the ionisation deposited in each of the layers. If active=True, only return the active layers'''
-        return np.array([v.layer._ionisation for v in self._layers if not active or v.layer._yield>0])
+        return np.array([v.layer.get_ionisation() for v in self._layers if not active or v.layer.get_yield()>0])
 
     def reset(self):
         '''Clears the recorded ionisation in each layer and particle traces'''
@@ -122,10 +122,10 @@ class Calorimeter:
         # Draw each layer
         for volume in self._layers:
             z_start = volume.z
-            thickness = volume.layer._thickness
+            thickness = volume.layer.get_thickness()
 
             # Determine color based on whether layer is active
-            color = active_color if volume.layer._yield > 0 else passive_color
+            color = active_color if volume.layer.get_yield() > 0 else passive_color
 
             # Create rectangle: (z_start, -extend/2), width=thickness, height=extend
             rect = patches.Rectangle(

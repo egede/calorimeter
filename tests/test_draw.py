@@ -7,6 +7,7 @@ from matplotlib.colors import to_rgba
 from calorimeter.calorimeter import Calorimeter
 from calorimeter.layer import Layer
 from calorimeter.particle import Electron
+from calorimeter.particle import Muon
 
 
 def test_draw_returns_axes_and_rectangles():
@@ -40,15 +41,19 @@ def test_draw_with_traces_adds_legend_entries():
     cal = Calorimeter()
     cal.add_layer(Layer("active", material=0.0, thickness=1.0, response=1.0))
 
-    # Record an electron trace
+    # Record an electron trace and a muon trace
     cal.enable_tracing()
     e = Electron(z=0.0, energy=0.05, trace=[(0.0, 0.0, 0.0), (0.1, 0.01, 0.0)])
     cal.record_trace(e)
+
+    m = Muon(z=0.0, energy=0.1, trace=[(0.0, 0.0, 0.0), (0.2, 0.02, 0.0)])
+    cal.record_trace(m)
 
     ax = cal.draw(show_traces=True)
     legend = ax.get_legend()
     assert legend is not None
     labels = [t.get_text() for t in legend.get_texts()]
-    # Active/passive are always present; electron traces label present as well
+    # Active/passive are always present; electron and muon traces labels present as well
     assert any("Active layer" in s for s in labels)
     assert any("Electron traces" in s for s in labels)
+    assert any("Muon traces" in s for s in labels)

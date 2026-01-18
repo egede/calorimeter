@@ -12,7 +12,7 @@ def test_calorimeter_add_layer_positions_and_zend():
     cal.add_layer(Layer("L2", material=0.0, thickness=2.0, response=0.0))
 
     assert cal._zend == 3.0
-    assert list(cal.positions(active=False)) == [0.0, 1.0]
+    assert [v.z for v in cal.volumes(active=False)] == [0.0, 1.0]
 
 
 def test_calorimeter_step_in_active_layer_ionises(monkeypatch):
@@ -143,3 +143,99 @@ def test_calorimeter_str_newline_separated():
     # Should have header + 2 layers = at least 3 lines
     assert len(lines) >= 3
     assert lines[0] == "The layers of the calorimeter:"
+
+
+def test_calorimeter_add_layers_empty_list():
+    """Test add_layers with an empty list."""
+    cal = Calorimeter()
+    cal.add_layers([])
+    assert cal._zend == 0.0
+    assert len(cal.volumes(active=False)) == 0
+
+
+def test_calorimeter_add_layers_single_layer():
+    """Test add_layers with a single layer."""
+    cal = Calorimeter()
+    layers = [Layer("L1", material=0.0, thickness=1.0, response=1.0)]
+    cal.add_layers(layers)
+
+    assert cal._zend == 1.0
+    assert len(cal.volumes(active=False)) == 1
+    assert cal.volumes(active=False)[0].z == 0.0
+    assert cal.volumes(active=False)[0].layer.get_name() == "L1"
+
+
+def test_calorimeter_add_layers_multiple_layers():
+    """Test add_layers with multiple layers."""
+    cal = Calorimeter()
+    layers = [
+        Layer("L1", material=0.0, thickness=1.0, response=1.0),
+        Layer("L2", material=0.5, thickness=2.0, response=0.0),
+        Layer("L3", material=1.0, thickness=1.5, response=2.0)
+    ]
+    cal.add_layers(layers)
+
+    assert cal._zend == 4.5
+    assert len(cal.volumes(active=False)) == 3
+    assert [v.z for v in cal.volumes(active=False)] == [0.0, 1.0, 3.0]
+    assert [v.layer.get_name() for v in cal.volumes(active=False)] == ["L1", "L2", "L3"]
+
+
+def test_calorimeter_add_layers_after_add_layer():
+    """Test add_layers after adding individual layers."""
+    cal = Calorimeter()
+    cal.add_layer(Layer("L1", material=0.0, thickness=1.0, response=1.0))
+
+    layers = [
+        Layer("L2", material=0.5, thickness=2.0, response=0.0),
+        Layer("L3", material=1.0, thickness=1.5, response=2.0)
+    ]
+    cal.add_layers(layers)
+
+    assert cal._zend == 4.5
+    assert len(cal.volumes(active=False)) == 3
+    assert [v.z for v in cal.volumes(active=False)] == [0.0, 1.0, 3.0]
+
+
+def test_calorimeter_add_layers_preserves_order():
+    """Test that add_layers preserves the order of layers."""
+    cal = Calorimeter()
+    layers = [
+        Layer("First", material=0.0, thickness=1.0, response=1.0),
+        Layer("Second", material=0.5, thickness=1.0, response=1.0),
+        Layer("Third", material=1.0, thickness=1.0, response=1.0)
+    ]
+    cal.add_layers(layers)
+
+    names = [v.layer.get_name() for v in cal.volumes(active=False)]
+    assert names == ["First", "Second", "Third"]
+
+
+def test_calorimeter_add_layers_updates_positions():
+    """Test that add_layers correctly updates z positions."""
+    cal = Calorimeter()
+    layers = [
+        Layer("L1", material=0.0, thickness=0.5, response=1.0),
+        Layer("L2", material=0.5, thickness=1.5, response=1.0),
+        Layer("L3", material=1.0, thickness=2.0, response=1.0)
+    ]
+    cal.add_layers(layers)
+
+    volumes = cal.volumes(active=False)
+    assert volumes[0].z == 0.0
+    assert volumes[1].z == 0.5
+    assert volumes[2].z == 2.0
+    assert cal._zend == 4.0
+
+
+def test_calorimeter_add_layers_copies_layers():
+    """Test that add_layers creates copies of layers, not references."""
+    cal = Calorimeter()
+    layer = Layer("L1", material=0.0, thickness=1.0, response=1.0)
+    cal.add_layers([layer])
+
+    # Modify the original layer
+    layer._ionisation = 100.0
+
+    # The calorimeter's layer should not be affected
+    assert cal.volumes(active=False)[0].layer._ionisation == 0.0

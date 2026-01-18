@@ -13,6 +13,21 @@ class Layer:
         self._yield = response
         self._ionisation = 0
 
+    def get_name(self):
+        return self._name
+
+    def get_material(self):
+        return self._material
+
+    def get_thickness(self):
+        return self._thickness
+
+    def get_yield(self):
+        return self._yield
+
+    def get_ionisation(self):
+        return self._ionisation
+
     def ionise(self, particle, step):
         '''Records the ionisation in each layer from a particle going a certain length.'''
         if particle.ionise:
