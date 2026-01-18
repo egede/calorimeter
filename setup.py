@@ -50,6 +50,7 @@ setup(
     data_files=[
         ("calorimeter/examples", [
             "calorimeter/examples/simulate.ipynb",
+            "calorimeter/examples/test.ipynb",
         ]),
     ],
 )
