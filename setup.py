@@ -22,7 +22,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="calorimeter",
-    version="0.1.0",
+    version="1.0.0",
     author="Ulrik Egede",
     author_email="ulrik.egede@monash.edu",
     description="A package that for education purposes creates a simple calorimeter that can be used for simulations",
@@ -37,7 +37,7 @@ setup(
         "Programming Language :: Python :: 3.13",
         "License :: OSI Approved :: GPLv3 License",
         "Operating System :: OS Independent",
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",
         "Topic :: Scientific/Engineering :: Physics",
     ],
