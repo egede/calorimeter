@@ -16,7 +16,7 @@ from .calorimeter import Calorimeter
 from .simulation import Simulation
 from .layer import Layer
 from .particle import Electron, Photon, Muon
-
+from .spectrum import Spectrum
 
 # Public API
 __all__ = [
@@ -27,4 +27,5 @@ __all__ = [
     "Electron",
     "Photon",
     "Muon",
+    "Spectrum",
 ]
