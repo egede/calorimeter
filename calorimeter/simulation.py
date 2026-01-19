@@ -5,10 +5,10 @@ from multiprocessing import Pool
 import multiprocessing as mp
 
 
-def _run_single_simulation(args):
-    '''Helper function for parallel simulation of individual particles.
-    Takes a tuple of (calorimeter, particle, step_size) and returns ionisations.'''
-    calorimeter, particle, step_size = args
+def _run_single_simulation_indexed(args):
+    '''Helper function for parallel simulation that preserves particle order.
+    Takes a tuple of (calorimeter, particle, step_size, index) and returns (ionisations, index).'''
+    calorimeter, particle, step_size, index = args
 
     calorimeter.reset()
     particles = deque([copy.copy(particle)])
@@ -24,7 +24,7 @@ def _run_single_simulation(args):
                 # Record trace when particle exits calorimeter
                 calorimeter.record_trace(np_p)
 
-    return calorimeter.ionisations()
+    return (calorimeter.ionisations(), index)
 
 
 class Simulation:
@@ -33,22 +33,26 @@ class Simulation:
     def __init__(self, calorimeter):
         self._calorimeter = calorimeter
 
-
-    def simulate(self, particle, number, deadcellfraction=0.0):
+    def simulate_sample(self, particles, deadcellfraction=0.0):
         '''Run a individual simulation. The ingoing particle is simulated going
         through the calorimeter "number" times. A 2D array is returned with the
         first axis the ionisation in the individual layers and the second corresponding to each
         new particle.
 
-        Uses multiprocessing to parallelize individual particle simulations across available CPU cores.'''
-        # Prepare arguments for parallel execution
-        args_list = [(copy.deepcopy(self._calorimeter), particle, 0.1) for _ in range(number)]
+        Uses multiprocessing to parallelize individual particle simulations across available CPU cores.
+        Results are ordered to match the input particles array.'''
+        # Prepare arguments for parallel execution with indices to maintain order
+        args_list = [(copy.deepcopy(self._calorimeter), particle, 0.1, i) for i, particle in enumerate(particles)]
 
         # Use all available CPU cores for parallel simulation
         num_cores = mp.cpu_count()
 
         with Pool(num_cores) as pool:
-            ionisations = pool.map(_run_single_simulation, args_list)
+            results = pool.map(_run_single_simulation_indexed, args_list)
+
+        # Sort results by original index to maintain particle array order
+        results.sort(key=lambda x: x[1])
+        ionisations = [result[0] for result in results]
 
         allionisations = np.stack(ionisations, axis=0)
         mask = np.random.random(allionisations.shape) < deadcellfraction
